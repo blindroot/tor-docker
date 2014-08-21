@@ -11,11 +11,19 @@ RUN \
 
 # Configure and run privoxy
 RUN \
-  echo "forward-socks5   /               127.0.0.1:9050 ." > /etc/privoxy/config && \
-  /etc/init.d/privoxy start
+  echo "forward-socks5 / 127.0.0.1:9050 ." > /etc/privoxy/config
+RUN echo "listen-address *:8118" >> /etc/privoxy/config
+RUN echo "debug 512" >> /etc/privoxy/config
 
-# Configure and startup TOR
 RUN \
   mkdir /var/lib/tor/hidden_service && \
-  chown -R debian-tor:debian-tor /var/lib/tor/hidden_service && \
-  /etc/init.d/tor start
+  chown -R debian-tor:debian-tor /var/lib/tor/hidden_service
+
+EXPOSE 8118
+
+# Configure and startup TOR
+CMD \
+  echo "Use me:" && \
+  echo "`ifconfig eth0 | grep 'inet addr:' | awk ' { print $2 } ' | cut -f 2 -d\:`:8118" && \
+  echo && \
+  /etc/init.d/tor start && sleep 5 && privoxy --no-daemon /etc/privoxy/config
