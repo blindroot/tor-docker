@@ -1,5 +1,5 @@
 FROM ubuntu:latest
-MAINTAINER mieciu "blindroot@gmail.om"
+MAINTAINER mieciu "blindroot@gmail.com"
 
 # Install TOR package dependencies
 RUN \
